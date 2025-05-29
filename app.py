@@ -24,8 +24,15 @@ from app.modules import DeviceManager, UICapturer
 app = Flask(__name__, static_folder='app/static', template_folder='app/templates')
     
 app.config['SECRET_KEY'] = 'xml_viewer_secret_key'
-# 尝试这种初始化方式
-socketio = SocketIO(app, cors_allowed_origins="*")
+# 增加超时时间和调整传输方式，改善连接稳定性
+socketio = SocketIO(
+    app,
+    cors_allowed_origins="*",
+    ping_timeout=60,  # 增加ping超时时间
+    ping_interval=25,  # 调整ping间隔
+    max_http_buffer_size=50 * 1024 * 1024,  # 增加最大HTTP缓冲区大小
+    async_mode='threading'  # 使用多线程模式
+)
 
 # 初始化设备管理器和UI捕获器
 device_manager = DeviceManager()
@@ -187,12 +194,39 @@ def get_screenshot():
     if not ui_capturer.last_screenshot:
         return jsonify({'error': '没有可用的屏幕截图'}), 404
     
-    # 将截图转换为字节流
-    img_io = io.BytesIO()
-    ui_capturer.last_screenshot.save(img_io, 'PNG')
-    img_io.seek(0)
-    
-    return send_file(img_io, mimetype='image/png', download_name='screenshot.png')
+    try:
+        # 将截图转换为字节流
+        img_io = io.BytesIO()
+        
+        # 复制图像以避免并发访问问题
+        img_copy = ui_capturer.last_screenshot.copy()
+        
+        # 可能的优化：缩小尺寸以减少传输数据量
+        max_dim = 1080  # 最大尺寸限制
+        width, height = img_copy.size
+        if width > max_dim or height > max_dim:
+            if width > height:
+                new_width = max_dim
+                new_height = int(height * (max_dim / width))
+            else:
+                new_height = max_dim
+                new_width = int(width * (max_dim / height))
+            img_copy = img_copy.resize((new_width, new_height), Image.LANCZOS)
+        
+        # 使用更低的品质来减小文件大小
+        img_copy.save(img_io, 'JPEG', quality=85, optimize=True)
+        img_io.seek(0)
+        
+        # 设置合适的缓存控制和内容大小头
+        response = send_file(img_io, mimetype='image/jpeg', download_name='screenshot.jpg')
+        response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Content-Length'] = str(img_io.getbuffer().nbytes)
+        
+        return response
+    except Exception as e:
+        logger.error(f"获取截图时出错: {str(e)}")
+        return jsonify({'error': f'获取截图时出错: {str(e)}'}), 500
 
 @app.route('/api/status')
 def get_status():
@@ -312,6 +346,21 @@ def handle_save_capture(data):
 # 主函数
 if __name__ == '__main__':
     try:
+        # 注册全局错误处理
+        @app.errorhandler(Exception)
+        def handle_exception(e):
+            if isinstance(e, ConnectionError):
+                logger.warning(f"连接错误: {str(e)}")
+                return jsonify({
+                    'error': '连接中断，请刷新页面重试',
+                    'details': str(e)
+                }), 500
+            logger.error(f"未处理的异常: {str(e)}")
+            return jsonify({
+                'error': '服务器内部错误',
+                'details': str(e)
+            }), 500
+        
         # 显示启动信息
         logger.info("XML Viewer Web服务已启动")
         logger.info("请在浏览器中访问: http://127.0.0.1:5000")

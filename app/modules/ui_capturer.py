@@ -58,25 +58,46 @@ class UICapturer:
             import os
             
             # 创建临时文件
-            temp_png = tempfile.NamedTemporaryFile(suffix='.png', delete=False).name
+            temp_file = None
             try:
-                # 保存截图
+                # 使用with语句确保文件正确关闭
+                with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as tmp:
+                    temp_png = tmp.name
+                    temp_file = temp_png
+                
+                # 保存截图到关闭后的临时文件
                 device.screenshot(temp_png)
                 
-                # 读取截图
+                # 读取截图，使用新的Image对象
                 if os.path.exists(temp_png):
-                    self.last_screenshot = Image.open(temp_png)
-                    logger.info(f"截图保存为临时文件并成功读取: {temp_png}")
+                    # 使用try-finally确保文件被关闭
+                    try:
+                        with Image.open(temp_png) as img:
+                            # 创建一个新的副本，避免文件锁定
+                            self.last_screenshot = img.copy()
+                        logger.info(f"截图保存为临时文件并成功读取: {temp_png}")
+                    except Exception as e:
+                        logger.error(f"读取截图文件时出错: {str(e)}")
+                        self.last_screenshot = None
                 else:
                     logger.error(f"截图文件未创建: {temp_png}")
                     self.last_screenshot = None
             finally:
-                # 清理临时文件
-                try:
-                    if os.path.exists(temp_png):
-                        os.unlink(temp_png)
-                except Exception as e:
-                    logger.warning(f"清理临时截图文件失败: {str(e)}")
+                # 清理临时文件，使用延迟和重试机制
+                if temp_file and os.path.exists(temp_file):
+                    retry_count = 3
+                    while retry_count > 0:
+                        try:
+                            os.unlink(temp_file)
+                            break
+                        except Exception as e:
+                            retry_count -= 1
+                            logger.warning(f"清理临时截图文件失败（剩余尝试：{retry_count}）: {str(e)}")
+                            # 等待一小段时间再尝试删除
+                            time.sleep(0.5)
+                    
+                    if retry_count == 0:
+                        logger.warning(f"无法清理临时文件: {temp_file}，将在程序退出时自动清理")
             
             self.last_capture_time = time.time()
             self.last_error = None
