@@ -1,0 +1,62 @@
+# Python缓存文件
+__pycache__/
+*.py[cod]
+*$py.class
+
+# 虚拟环境
+venv/
+env/
+ENV/
+.env
+.venv
+
+# 日志文件
+*.log
+logs/
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# IDE配置
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# 数据库文件
+*.db
+*.sqlite3
+
+# 临时文件
+temp/
+tmp/
+
+# 个人笔记和开发文件
+notes.txt
+TODO.md
+dev_notes/
+
+# 本地配置和敏感信息
+instance/
+.env
+.flaskenv
+config.local.py
+
+# 测试覆盖率报告
+.coverage
+htmlcov/
+
+# 捕获的UI结构和截图(如不想包含在代码库中)
+captured/
+screenshots/
+ui_dumps/
+
+# 可能的缓存目录
+.pytest_cache/
+.mypy_cache/
+
+# 构建和分发
+dist/
+build/
+*.egg-info/ 

@@ -1,0 +1,607 @@
+/* 全局布局样式 */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    height: 100%;
+    background-color: #f8f9fa;
+    overflow-x: hidden; /* 防止水平滚动 */
+}
+
+.container {
+    display: flex;
+    padding: 25px;
+    height: 95%;
+    overflow: hidden;
+    position: relative;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+}
+
+/* 树形结构区域 */
+.tree-container {
+    width: 30%;
+    border-right: 1px solid #e0e0e0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 15px;
+    background-color: #fff;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+    position: relative;
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: #c1c1c1 #f5f5f5; /* Firefox */
+    z-index: 5; /* 确保覆盖在其他元素上 */
+}
+
+/* 自定义滚动条样式 */
+.tree-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.tree-container::-webkit-scrollbar-track {
+    background: #f5f5f5;
+}
+
+.tree-container::-webkit-scrollbar-thumb {
+    background-color: #c1c1c1;
+    border-radius: 6px;
+    border: 2px solid #f5f5f5;
+}
+
+/* 树形结构标题 */
+.tree-container h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 16px;
+    color: #424242;
+    font-weight: 500;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+/* 树形结构搜索框 */
+.search-box {
+    width: calc(100% - 16px);
+    padding: 10px;
+    margin: 0 0 15px 0;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 14px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    transition: all 0.2s ease;
+}
+
+.search-box:focus {
+    border-color: #8bc34a;
+    outline: none;
+    box-shadow: 0 1px 3px rgba(139, 195, 74, 0.3);
+}
+
+/* 树形结构样式 */
+.ui-tree {
+    list-style-type: none;
+    padding-left: 0;
+    margin: 0;
+    overflow-y: auto;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.ui-tree details {
+    margin-left: 1em;
+    margin-bottom: 2px;
+}
+
+.ui-tree summary {
+    cursor: pointer;
+    padding: 6px 8px;
+    border-radius: 4px;
+    transition: background-color 0.2s, color 0.2s;
+    outline: none;
+    position: relative;
+}
+
+.ui-tree summary:hover {
+    background-color: #f5f5f5;
+}
+
+.ui-tree summary:focus {
+    background-color: #f0f7ff;
+}
+
+.ui-tree details[open] > summary {
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.ui-tree li {
+    margin: 2px 0;
+    padding: 2px 0;
+    transition: all 0.2s ease;
+}
+
+.ui-tree span {
+    display: inline-block;
+    padding: 6px 8px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.ui-tree span:hover {
+    background-color: #f5f5f5;
+}
+
+.ui-tree li.selected > summary, 
+.ui-tree li.selected > span {
+    background-color: #e8f5e9;
+    border-radius: 4px;
+    padding: 6px 8px;
+    position: relative;
+    color: #2e7d32;
+    font-weight: 500;
+}
+
+.ui-tree li.selected > summary::before, 
+.ui-tree li.selected > span::before {
+    content: "";
+    position: absolute;
+    left: -8px;
+    top: 0;
+    height: 100%;
+    border-left: 3px solid #4CAF50;
+    border-radius: 3px;
+}
+
+.ui-tree li.highlight > summary,
+.ui-tree li.highlight > span {
+    animation: highlight-pulse 1s ease-in-out 2;
+}
+
+/* 树节点类型样式 */
+.ui-tree .node-android {
+    color: #4CAF50;
+}
+
+.ui-tree .node-image {
+    color: #9C27B0;
+    position: relative;
+}
+
+.ui-tree .node-image::after {
+    content: "🖼️";
+    font-size: 12px;
+    margin-left: 5px;
+    opacity: 0.7;
+}
+
+.ui-tree .node-text {
+    color: #03A9F4;
+}
+
+.ui-tree .node-clickable {
+    color: #FF9800;
+    font-weight: 500;
+    position: relative;
+}
+
+.ui-tree .node-clickable::after {
+    content: "👆";
+    font-size: 12px;
+    margin-left: 5px;
+    opacity: 0.7;
+}
+
+/* 属性详情区域 */
+.details-container {
+    width: auto;
+    border-right: 1px solid #dee2e6;
+    overflow-y: auto;
+    padding: 15px;
+    padding-bottom: 30px; /* 增加底部内边距 */
+    background-color: #fff;
+    box-shadow: -2px 0 5px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    max-height: 100vh;
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: #c1c1c1 #f5f5f5; /* Firefox */
+}
+
+/* 自定义详情区域滚动条样式 */
+.details-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.details-container::-webkit-scrollbar-track {
+    background: #f5f5f5;
+}
+
+.details-container::-webkit-scrollbar-thumb {
+    background-color: #c1c1c1;
+    border-radius: 6px;
+    border: 2px solid #f5f5f5;
+}
+
+.details-container h2 {
+    margin-top: 0;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    font-size: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* 节点详情样式 */
+#nodeDetails {
+    position: relative;
+    width: 30%;
+}
+
+#nodeDetails h2 {
+    color: #333;
+    font-weight: 500;
+    margin-bottom: 16px;
+}
+
+#nodeDetails button {
+    border: none;
+    background-color: #f0f0f0;
+    color: #555;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#nodeDetails button:hover {
+    background-color: #e0e0e0;
+    color: #333;
+}
+
+/* 节点预览样式 */
+.node-preview {
+    background-color: #f8f9fa;
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 16px;
+    border-left: 4px solid #4CAF50;
+}
+
+.node-preview h3 {
+    margin-top: 0;
+    font-size: 15px;
+    color: #2e7d32;
+    margin-bottom: 8px;
+}
+
+.node-preview p {
+    margin: 5px 0;
+    font-size: 13px;
+    color: #555;
+}
+
+/* XPath 功能区域 */
+.xpath-section {
+    background-color: #f1f8e9;
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 16px;
+    border-left: 4px solid #8bc34a;
+}
+
+.xpath-section h3 {
+    margin-top: 0;
+    font-size: 15px;
+    color: #558b2f;
+    margin-bottom: 10px;
+}
+
+.xpath-controls {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.xpath-btn {
+    background-color: #8bc34a;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: background-color 0.2s;
+}
+
+.xpath-btn:hover {
+    background-color: #7cb342;
+}
+
+.xpath-result {
+    position: relative;
+    margin-top: 10px;
+}
+
+#xpathResult {
+    width: 100%;
+    min-height: 60px;
+    padding: 8px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: 'Consolas', monospace;
+    font-size: 12px;
+    resize: vertical;
+    color: #333;
+}
+
+.copy-btn {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    background-color: #9ccc65;
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+
+.copy-btn:hover {
+    opacity: 1;
+}
+
+/* 属性表格样式 */
+.attribute-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-top: 8px;
+    border: 1px solid #e0e0e0;
+}
+
+.attribute-table th {
+    text-align: left;
+    padding: 8px 10px;
+    background-color: #f5f5f5;
+    border: 1px solid #e0e0e0;
+    font-weight: 500;
+    color: #555;
+    width: 35%;
+}
+
+.attribute-table td {
+    padding: 8px 10px;
+    border: 1px solid #e0e0e0;
+    word-break: break-all;
+    color: #333;
+    background-color: #fff;
+}
+
+.attribute-table tr:nth-child(even) td {
+    background-color: #fafafa;
+}
+
+.attribute-table tr:hover td {
+    background-color: #f0f7ff;
+}
+
+/* 高亮显示重要属性 */
+.attribute-highlight {
+    background-color: #fffde7 !important;
+    font-weight: 500;
+}
+
+/* 动画效果 */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+#nodeDetails > * {
+    animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* 层选择菜单美化 */
+#layerSelectionMenu {
+    position: absolute;
+    background: white;
+    border: none;
+    padding: 8px 0;
+    border-radius: 6px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.15);
+    display: none;
+    z-index: 1500;
+    max-height: 300px;
+    overflow-y: auto;
+    animation: fadeIn 0.2s ease-out;
+}
+
+.layer-item {
+    padding: 8px 16px;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 300px;
+    transition: background-color 0.2s;
+    color: #333;
+}
+
+.layer-item:hover {
+    background-color: #f0f7ff;
+}
+
+.layer-item.selected {
+    background-color: #e3f2fd;
+    color: #1976d2;
+    font-weight: 500;
+}
+
+/* 预览区域 */
+.preview-container {
+    width: 40%;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background-color: #f0f0f0;
+    position: relative;
+}
+
+.controls {
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: white;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.view-mode {
+    margin-bottom: 10px;
+}
+
+/* 确保手机模拟区域固定不动 */
+.phone-frame {
+    position: relative;
+    margin: 20px auto;
+    width: 340px;
+    height: 680px;
+    border: 12px solid #333;
+    border-radius: 24px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    transform-origin: center center;
+    background-color: #fff;
+    /* 防止滚动影响 */
+    will-change: transform;
+    z-index: 1;
+}
+
+.phone-screen {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: #fff;
+    /* 确保内容不会随页面滚动 */
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
+/* UI元素样式 */
+.ui-element {
+    position: absolute;
+    pointer-events: all;
+    background-color: transparent;
+    border: 1.5px solid rgba(33, 150, 243, 0.9);
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.7);
+    overflow: hidden;
+    padding: 2px;
+}
+
+.ui-element.clickable {
+    background-color: transparent;
+    border: 1.5px solid rgba(255, 152, 0, 0.9);
+}
+
+.ui-element.image {
+    background-color: transparent;
+    border: 1.5px solid rgba(156, 39, 176, 0.9);
+}
+
+.ui-element.with-text {
+    background-color: transparent;
+    border: 1.5px solid rgba(3, 169, 244, 0.7);
+}
+
+.ui-element.selected {
+    background-color: rgba(76, 175, 80, 0.3) !important;
+    border: 2px solid rgba(76, 175, 80, 1) !important;
+    z-index: 1000 !important;
+}
+
+/* 图例 */
+.legend {
+    margin-top: auto;
+    padding: 10px;
+    border-top: 1px solid #dee2e6;
+    background-color: #f8f9fa;
+}
+
+.legend h3 {
+    margin-top: 0;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.legend-color {
+    width: 20px;
+    height: 20px;
+    border: 1px solid rgba(0,0,0,0.2);
+    margin-right: 8px;
+    border-radius: 2px;
+}
+
+/* 响应式布局 */
+@media (max-width: 1200px) {
+    .container {
+        flex-direction: column;
+    }
+    
+    .tree-container, .details-container {
+        width: 100%;
+        max-height: 300px;
+    }
+    
+    .preview-container {
+        flex: 1;
+    }
+}
+
+/* 确保最后一个子元素有足够的底部外边距 */
+.details-container > *:last-child {
+    margin-bottom: 20px;
+}
+
+/* 节点数量样式 */
+.node-count {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 2px 6px;
+    background-color: #e0e0e0;
+    border-radius: 12px;
+    font-size: 0.85em;
+    color: #444;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: bold;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.node-count:hover {
+    background-color: #2196F3;
+    color: white;
+    transform: scale(1.1);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+} 
