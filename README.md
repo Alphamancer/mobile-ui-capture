@@ -61,7 +61,8 @@
 
 ## 功能截图
 
-![功能截图](https://example.com/screenshot.png)
+![功能截图](https://github.com/user-attachments/assets/92549d85-6e56-4a12-93c2-af553db55c02)
+
 
 ## 系统要求
 
